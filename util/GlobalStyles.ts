@@ -7,6 +7,9 @@ const GlobalStyles = createGlobalStyle`
 *::after {
   box-sizing: border-box;
 }
+html{
+ font-family: 'Roboto', sans-serif;
+}
 
 /* Remove default margin */
 body,
