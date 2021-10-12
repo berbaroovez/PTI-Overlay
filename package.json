@@ -1,0 +1,23 @@
+{
+  "name": "with-styled-components",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/styled-components": "^5.1.9",
+    "next": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^16.8.0",
+    "react-is": "^16.8.0",
+    "styled-components": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.4",
+    "babel-plugin-styled-components": "^1.8.0",
+    "typescript": "^4.4.3"
+  },
+  "license": "MIT"
+}
