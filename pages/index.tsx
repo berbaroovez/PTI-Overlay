@@ -103,7 +103,13 @@ function App() {
   return (
     <PTIOverlay>
       <TickerZone>
-        <TopicImage src="https://miro.medium.com/fit/c/1360/1360/1*GzNpk1PETIQT7umipMmaQw.jpeg" />
+        <TopicImage
+          src={
+            topicList[currentTopicIndex].imageURL
+              ? topicList[currentTopicIndex].imageURL
+              : "https://miro.medium.com/fit/c/1360/1360/1*GzNpk1PETIQT7umipMmaQw.jpeg"
+          }
+        />
         <TimerZone>
           <Timer>
             <span>{minutes}</span>:{seconds < 10 && seconds > 0 && 0}
