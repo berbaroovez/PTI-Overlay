@@ -59,6 +59,10 @@ function App() {
       tempTopicList[currentTopicIndex].finished = true;
 
       setCurrentTopicIndex(currentTopicIndex + 1);
+      pause();
+      const time = new Date();
+      time.setSeconds(time.getSeconds() + timeResetValue);
+      restart(time);
     } catch (err) {
       console.log(err);
     }
@@ -152,7 +156,7 @@ function App() {
             />
           </ResetTimeZone>
           <button onClick={finishTopTopic} className="finishTop">
-            Finish Top Topic
+            Finish Topic
           </button>
         </TimerControls>
 
