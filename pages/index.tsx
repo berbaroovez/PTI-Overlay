@@ -14,10 +14,13 @@ interface TopicProps {
 interface TopicType {
   topic: string;
   finished: boolean;
+  imageURL: string | null;
 }
 
 function App() {
+  const [currentTopicIndex, setCurrentTopicIndex] = React.useState(0);
   const [newTopic, setNewTopic] = React.useState("");
+  const [newTopicImageURL, setNewTopicImageURL] = React.useState("");
   const [topicList, setTopicList] = React.useState<TopicType[]>([]);
   const [timeResetValue, setTimeResetValue] = React.useState(120);
   const time = new Date();
@@ -52,13 +55,12 @@ function App() {
 
   const finishTopTopic = () => {
     const tempTopicList = [...topicList];
+    try {
+      tempTopicList[currentTopicIndex].finished = true;
 
-    for (let i = 0; i < tempTopicList.length; i++) {
-      if (tempTopicList[i].finished == false) {
-        tempTopicList[i].finished = true;
-        break;
-      }
-      setTopicList(tempTopicList);
+      setCurrentTopicIndex(currentTopicIndex + 1);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -78,9 +80,20 @@ function App() {
   //add topic
   const addTopic = () => {
     const tempTopicList = [...topicList];
-    tempTopicList.push({ topic: newTopic, finished: false });
+
+    if (newTopicImageURL == "") {
+      tempTopicList.push({ topic: newTopic, finished: false, imageURL: null });
+    } else {
+      tempTopicList.push({
+        topic: newTopic,
+        finished: false,
+        imageURL: newTopicImageURL,
+      });
+    }
+
     setTopicList(tempTopicList);
     setNewTopic("");
+    setNewTopicImageURL("");
   };
 
   return (
@@ -96,8 +109,12 @@ function App() {
         </TimerZone>
         <TopicZone>
           {topicList.length > 0 &&
-            topicList.map((topic) => (
-              <Topic isFinished={topic.finished} key={Math.random()}>
+            topicList.map((topic, index) => (
+              <Topic
+                isFinished={topic.finished}
+                key={Math.random()}
+                isSelected={index === currentTopicIndex ? true : false}
+              >
                 <TopicTitle>{topic.topic}</TopicTitle>
               </Topic>
             ))}
@@ -140,7 +157,7 @@ function App() {
         </TimerControls>
 
         <TopicControlZone>
-          <>
+          <AddTopicZone>
             <h3>Add Topic +</h3>
             <input
               type="text"
@@ -150,8 +167,16 @@ function App() {
                 setNewTopic(e.target.value);
               }}
             />
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={newTopicImageURL}
+              onChange={(e) => {
+                setNewTopicImageURL(e.target.value);
+              }}
+            />
             <button onClick={addTopic}>Add</button>
-          </>
+          </AddTopicZone>
           <TopicZone>
             {topicList.length > 0 &&
               topicList.map((topic, index) => (
@@ -183,6 +208,13 @@ function App() {
     </PTIOverlay>
   );
 }
+const AddTopicZone = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
 
 const PTIOverlay = styled.div`
   display: grid;
@@ -191,6 +223,8 @@ const PTIOverlay = styled.div`
   gap: 20px;
 
   button {
+    border-radius: 10px;
+    border: none;
     &:hover {
       cursor: pointer;
     }
@@ -232,8 +266,6 @@ const TimerControls = styled.div`
     font-family: "Roboto", sans-serif;
     width: 100px;
     height: 50px;
-    border-radius: 10px;
-    border: none;
 
     &:hover {
       cursor: pointer;
@@ -305,16 +337,30 @@ const TopicZone = styled.div`
   height: 850px;
   padding-top: 2px; ;
 `;
+
+//  {
+//    progressBar === 0 ? "test" : progressBar == 50 ? "⛏ing" : "🏁";
+//  }
 const Topic = styled.div<TopicProps>`
   position: relative;
   display: flex;
   justify-content: start;
   align-items: center;
   background-color: ${(p) =>
-    p.isFinished == true ? "hsl(6, 70%, 26%)" : "hsl(6, 70%, 46%)"};
+    p.isSelected
+      ? "yellow"
+      : p.isFinished == true
+      ? "hsl(6, 70%, 26%)"
+      : "hsl(6, 70%, 46%)"};
   color: ${(p) =>
-    p.isFinished == true ? "hsl(0, 0%, 65.88235294117646%)" : "#ffffff"};
+    p.isSelected
+      ? "black"
+      : p.isFinished == true
+      ? "hsl(0, 0%, 65.88235294117646%)"
+      : "#ffffff"};
   width: ${(p) => (p.admin == true ? "100%" : "98%")};
+
+  /* border: ${(p) => (p.isSelected == true ? "2px solid blue" : "none")}; */
 
   height: 70px;
 
