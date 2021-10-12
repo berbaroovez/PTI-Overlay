@@ -84,79 +84,7 @@ function App() {
   };
 
   return (
-    <>
-      <TimerControls>
-        <>
-          <button className="start" onClick={start}>
-            Start
-          </button>
-          <button onClick={pause}>Pause</button>
-          {/* <button onClick={resume}>Resume</button> */}
-          <button
-            className="restart"
-            onClick={() => {
-              // Restarts to 5 minutes timer
-              const time = new Date();
-              time.setSeconds(time.getSeconds() + timeResetValue);
-              restart(time);
-              pause();
-            }}
-          >
-            Restart
-          </button>
-
-          <button onClick={finishTopTopic}>Finish Top Topic</button>
-        </>
-        <>
-          <label>Type in what time you want to reset to in seconds</label>
-          <input
-            type="number"
-            value={timeResetValue}
-            onChange={(e) => setTimeResetValue(parseInt(e.target.value))}
-          />
-        </>
-      </TimerControls>
-
-      <TopicControlZone>
-        <>
-          <h3>Add Topic +</h3>
-          <input
-            type="text"
-            placeholder="Topic"
-            value={newTopic}
-            onChange={(e) => {
-              setNewTopic(e.target.value);
-            }}
-          />
-          <button onClick={addTopic}>Add</button>
-        </>
-        <TopicZone>
-          {topicList.length > 0 &&
-            topicList.map((topic, index) => (
-              <Topic isFinished={topic.finished} key={Math.random()} admin>
-                <TopicTitle>{topic.topic}</TopicTitle>
-                <AdminButton>
-                  <button
-                    className="delete"
-                    onClick={() => {
-                      deleteTopic(null, index);
-                    }}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    className="finished"
-                    onClick={() => {
-                      finishTopic(null, index);
-                    }}
-                  >
-                    Finished
-                  </button>
-                </AdminButton>
-              </Topic>
-            ))}
-        </TopicZone>
-      </TopicControlZone>
+    <PTIOverlay>
       <TickerZone>
         <TopicImage src="https://miro.medium.com/fit/c/1360/1360/1*GzNpk1PETIQT7umipMmaQw.jpeg" />
         <TimerZone>
@@ -175,16 +103,129 @@ function App() {
             ))}
         </TopicZone>
       </TickerZone>
-    </>
+      <AdminControls>
+        <TimerControls>
+          <>
+            <button className="start" onClick={start}>
+              Start
+            </button>
+            <button onClick={pause} className="pause">
+              Pause
+            </button>
+            {/* <button onClick={resume}>Resume</button> */}
+            <button
+              className="restart"
+              onClick={() => {
+                // Restarts to 5 minutes timer
+                const time = new Date();
+                time.setSeconds(time.getSeconds() + timeResetValue);
+                restart(time);
+                pause();
+              }}
+            >
+              Restart
+            </button>
+          </>
+          <ResetTimeZone>
+            <label>Type in what time you want to reset to in seconds</label>
+            <input
+              type="number"
+              value={timeResetValue}
+              onChange={(e) => setTimeResetValue(parseInt(e.target.value))}
+            />
+          </ResetTimeZone>
+          <button onClick={finishTopTopic} className="finishTop">
+            Finish Top Topic
+          </button>
+        </TimerControls>
+
+        <TopicControlZone>
+          <>
+            <h3>Add Topic +</h3>
+            <input
+              type="text"
+              placeholder="Topic"
+              value={newTopic}
+              onChange={(e) => {
+                setNewTopic(e.target.value);
+              }}
+            />
+            <button onClick={addTopic}>Add</button>
+          </>
+          <TopicZone>
+            {topicList.length > 0 &&
+              topicList.map((topic, index) => (
+                <Topic isFinished={topic.finished} key={Math.random()} admin>
+                  <TopicTitle>{topic.topic}</TopicTitle>
+                  <AdminButton>
+                    <button
+                      className="delete"
+                      onClick={() => {
+                        deleteTopic(null, index);
+                      }}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="finished"
+                      onClick={() => {
+                        finishTopic(null, index);
+                      }}
+                    >
+                      Finished
+                    </button>
+                  </AdminButton>
+                </Topic>
+              ))}
+          </TopicZone>
+        </TopicControlZone>
+      </AdminControls>
+    </PTIOverlay>
   );
 }
-const TimerControls = styled.div`
-  position: absolute;
-  top: 100px;
-  left: 500px;
-  background-color: #afa2a2;
-  padding: 10px 20px;
+
+const PTIOverlay = styled.div`
+  display: grid;
+  grid-template-columns: 400px 500px;
+  grid-template-rows: 1fr;
+  gap: 20px;
+
+  button {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`;
+const AdminControls = styled.div`
+  input {
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+  }
+
+  padding: 5px;
   border-radius: 10px;
+  background-color: #afa2a2;
+  .finishTop {
+    width: 200px;
+    margin-top: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`;
+
+const ResetTimeZone = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* width: 200px; */
+  font-size: 1.2rem;
+  margin-top: 10px;
+  width: 300px;
+`;
+const TimerControls = styled.div`
+  padding: 10px 20px;
+  /* border-radius: 10px; */
 
   button {
     font-weight: bold;
@@ -193,10 +234,9 @@ const TimerControls = styled.div`
     height: 50px;
     border-radius: 10px;
     border: none;
-    background-color: #f5f5f5;
 
     &:hover {
-      background-color: #e5e5e5;
+      cursor: pointer;
     }
   }
   .start {
@@ -214,12 +254,17 @@ const TimerControls = styled.div`
       background-color: #cc0000;
     }
   }
+
+  .pause {
+    background-color: #ee9a2b;
+    &:hover {
+      background-color: #ca8325;
+    }
+  }
 `;
 
 const TopicControlZone = styled.div`
-  position: absolute;
-  left: 500px;
-  top: 300px;
+  background-color: #afa2a2;
 `;
 const TickerZone = styled.div`
   height: 100vh;
@@ -269,7 +314,8 @@ const Topic = styled.div<TopicProps>`
     p.isFinished == true ? "hsl(6, 70%, 26%)" : "hsl(6, 70%, 46%)"};
   color: ${(p) =>
     p.isFinished == true ? "hsl(0, 0%, 65.88235294117646%)" : "#ffffff"};
-  width: ${(p) => (p.admin == true ? "500px" : "98%")};
+  width: ${(p) => (p.admin == true ? "100%" : "98%")};
+
   height: 70px;
 
   margin: 0 auto;
@@ -289,18 +335,24 @@ const TopicTitle = styled.div`
 
 const AdminButton = styled.div`
   position: absolute;
-
-  right: 0;
-  top: 0;
+  font-size: 15px;
+  right: 5px;
+  top: 2px;
   display: flex;
   flex-direction: column;
 
   align-items: flex-end;
   .delete {
     background-color: #ff0000;
+    &:hover {
+      background-color: #cc0000;
+    }
   }
   .finished {
     background-color: #23ff71;
+    &:hover {
+      background-color: #1dcc5a;
+    }
   }
   button {
     padding: 5px;
